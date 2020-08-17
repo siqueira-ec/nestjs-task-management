@@ -6,6 +6,8 @@ import {
   Unique,
 } from 'typeorm';
 
+import { hash } from 'bcrypt';
+
 @Entity()
 @Unique(['username'])
 export class User extends BaseEntity {
@@ -20,4 +22,10 @@ export class User extends BaseEntity {
 
   @Column()
   salt: string;
+
+  async validatePassword(password: string): Promise<boolean> {
+    const check = await hash(password, this.salt);
+
+    return check === this.password;
+  }
 }
